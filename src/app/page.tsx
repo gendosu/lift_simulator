@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 
-type Floor = number | 'R' | 'B1';
+type Floor = '1' | '2' | '3' | '4' | '5' | 'R' | 'B1';
 type FloorConfig = {
-  [key in Floor | string]: number;
+  [key in Floor]: number;
 };
 
 const ElevatorSimulator = () => {
@@ -24,7 +24,7 @@ const ElevatorSimulator = () => {
   const [isDoorOpen, setIsDoorOpen] = useState(false);
   const [isDoorMoving, setIsDoorMoving] = useState(false);
   
-  const floors: Floor[] = ['R', 5, 4, 3, 2, 1, 'B1'];
+  const floors: Floor[] = ['R', '5', '4', '3', '2', '1', 'B1'];
   const elevatorHeight = 384;
   const elevatorCarHeight = 64;
   const shaftPadding = 16;
