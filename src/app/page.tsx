@@ -2,8 +2,13 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 
+type Floor = number | 'R' | 'B1';
+type FloorConfig = {
+  [key in Floor | string]: number;
+};
+
 const ElevatorSimulator = () => {
-  const floorConfig = {
+  const floorConfig: FloorConfig = {
     'R': 7,
     '5': 6,
     '4': 5,
@@ -13,34 +18,33 @@ const ElevatorSimulator = () => {
     'B1': 1
   };
 
-  const [currentFloor, setCurrentFloor] = useState('1');
-  const [targetFloor, setTargetFloor] = useState(null);
+  const [currentFloor, setCurrentFloor] = useState<Floor>('1');
+  const [targetFloor, setTargetFloor] = useState<Floor | null>(null);
   const [isMoving, setIsMoving] = useState(false);
   const [isDoorOpen, setIsDoorOpen] = useState(false);
   const [isDoorMoving, setIsDoorMoving] = useState(false);
   
-  const floors = ['R', 5, 4, 3, 2, 1, 'B1'];
-  const elevatorHeight = 384; // シャフトの高さから余白を引いた値
-  const elevatorCarHeight = 64; // エレベーターの高さ
-  const shaftPadding = 16; // シャフトの上下の余白
+  const floors: Floor[] = ['R', 5, 4, 3, 2, 1, 'B1'];
+  const elevatorHeight = 384;
+  const elevatorCarHeight = 64;
+  const shaftPadding = 16;
   
-  const getFloorDisplay = (floor) => {
+  const getFloorDisplay = (floor: Floor): string => {
     if (floor === 'B1' || floor === 'R') return floor;
     return `${floor}F`;
   };
 
-  const calculateElevatorPosition = () => {
+  const calculateElevatorPosition = (): number => {
     const totalFloors = Object.keys(floorConfig).length;
-    const movableHeight = elevatorHeight - elevatorCarHeight; // エレベーターが動ける実際の高さ
+    const movableHeight = elevatorHeight - elevatorCarHeight;
     const floorHeight = movableHeight / (totalFloors - 1);
     const currentFloorValue = floorConfig[currentFloor];
     
-    // Rが一番上、B1が一番下になるように計算
     const position = shaftPadding + ((totalFloors - currentFloorValue) * floorHeight);
     return position;
   };
 
-  const handleFloorClick = (floor) => {
+  const handleFloorClick = (floor: Floor): void => {
     if (isMoving || floor === currentFloor) return;
     if (isDoorOpen) {
       handleDoorControl(false);
@@ -54,7 +58,7 @@ const ElevatorSimulator = () => {
     }
   };
 
-  const handleDoorControl = (open) => {
+  const handleDoorControl = (open: boolean): void => {
     if (isMoving || isDoorMoving || open === isDoorOpen) return;
     setIsDoorMoving(true);
     setTimeout(() => {
@@ -63,7 +67,7 @@ const ElevatorSimulator = () => {
     }, 1000);
   };
 
-  const getNextFloor = useCallback((current, target) => {
+  const getNextFloor = useCallback((current: Floor, target: Floor): Floor | null => {
     const currentValue = floorConfig[current];
     const targetValue = floorConfig[target];
     
@@ -74,7 +78,7 @@ const ElevatorSimulator = () => {
     const currentIndex = floors.indexOf(current);
     const nextIndex = currentIndex - direction;
     return floors[nextIndex];
-  }, [floorConfig]);
+  }, [floorConfig, floors]);
 
   useEffect(() => {
     if (targetFloor === null || !isMoving) return;
@@ -98,12 +102,10 @@ const ElevatorSimulator = () => {
   return (
     <div className="flex h-screen bg-gray-100 p-4">
       <div className="flex flex-col mr-8">
-        {/* 現在階表示 */}
         <div className="bg-orange-500 p-4 mb-4 text-white font-bold w-48 h-20 flex items-center justify-center">
           <div className="text-4xl">{getFloorDisplay(currentFloor)}</div>
         </div>
         
-        {/* フロアボタン */}
         <div className="flex flex-wrap gap-4 mb-8 w-36">
           {floors.map(floor => (
             <button
@@ -122,7 +124,6 @@ const ElevatorSimulator = () => {
           ))}
         </div>
 
-        {/* ドア開閉ボタン */}
         <div className="flex flex-col gap-4">
           <button
             onClick={() => handleDoorControl(true)}
@@ -143,29 +144,24 @@ const ElevatorSimulator = () => {
         </div>
       </div>
 
-      {/* エレベーターシャフト */}
       <div className="relative w-32 h-96 bg-gray-200">
-        {/* シャフト内の階数マーク */}
         <div className="absolute left-0 top-0 h-full w-full flex flex-col justify-between py-4">
           {floors.map(floor => (
             <div key={floor} className="w-3 h-0.5 bg-gray-300"/>
           ))}
         </div>
-        {/* エレベーター */}
         <div
           className="absolute w-24 h-16 bg-blue-300 left-4 overflow-hidden transition-all duration-1000"
           style={{
             top: `${calculateElevatorPosition()}px`,
           }}
         >
-          {/* 左ドア */}
           <div
             className="absolute top-0 left-0 w-1/2 h-full bg-blue-500 transition-all duration-1000"
             style={{
               transform: `translateX(${isDoorOpen ? '-100%' : '0'})`,
             }}
           />
-          {/* 右ドア */}
           <div
             className="absolute top-0 right-0 w-1/2 h-full bg-blue-500 transition-all duration-1000"
             style={{
