@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const ElevatorSimulator = () => {
   const floorConfig = {
@@ -63,7 +63,7 @@ const ElevatorSimulator = () => {
     }, 1000);
   };
 
-  const getNextFloor = (current, target) => {
+  const getNextFloor = useCallback((current, target) => {
     const currentValue = floorConfig[current];
     const targetValue = floorConfig[target];
     
@@ -74,7 +74,7 @@ const ElevatorSimulator = () => {
     const currentIndex = floors.indexOf(current);
     const nextIndex = currentIndex - direction;
     return floors[nextIndex];
-  };
+  }, [floorConfig]);
 
   useEffect(() => {
     if (targetFloor === null || !isMoving) return;
@@ -93,7 +93,7 @@ const ElevatorSimulator = () => {
 
     const timer = setTimeout(moveElevator, 1000);
     return () => clearTimeout(timer);
-  }, [targetFloor, currentFloor, isMoving]);
+  }, [targetFloor, currentFloor, isMoving, getNextFloor]);
 
   return (
     <div className="flex h-screen bg-gray-100 p-4">
@@ -147,7 +147,7 @@ const ElevatorSimulator = () => {
       <div className="relative w-32 h-96 bg-gray-200">
         {/* シャフト内の階数マーク */}
         <div className="absolute left-0 top-0 h-full w-full flex flex-col justify-between py-4">
-          {floors.map((floor, index) => (
+          {floors.map(floor => (
             <div key={floor} className="w-3 h-0.5 bg-gray-300"/>
           ))}
         </div>
