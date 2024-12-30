@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 type Floor = '1' | '2' | '3' | '4' | '5' | 'R' | 'B1';
 type FloorConfig = {
@@ -8,7 +8,7 @@ type FloorConfig = {
 };
 
 const ElevatorSimulator = () => {
-  const floorConfig: FloorConfig = {
+  const floorConfig: FloorConfig = useMemo(() => ({
     'R': 7,
     '5': 6,
     '4': 5,
@@ -16,7 +16,7 @@ const ElevatorSimulator = () => {
     '2': 3,
     '1': 2,
     'B1': 1
-  };
+  }), []);
 
   const [currentFloor, setCurrentFloor] = useState<Floor>('1');
   const [targetFloor, setTargetFloor] = useState<Floor | null>(null);
@@ -24,7 +24,7 @@ const ElevatorSimulator = () => {
   const [isDoorOpen, setIsDoorOpen] = useState(false);
   const [isDoorMoving, setIsDoorMoving] = useState(false);
   
-  const floors: Floor[] = ['R', '5', '4', '3', '2', '1', 'B1'];
+  const floors: Floor[] = useMemo(() => ['R', '5', '4', '3', '2', '1', 'B1'], []);
   const elevatorHeight = 384;
   const elevatorCarHeight = 64;
   const shaftPadding = 16;
