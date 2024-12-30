@@ -151,7 +151,7 @@ const ElevatorSimulator = () => {
           ))}
         </div>
         <div
-          className="absolute w-24 h-16 bg-blue-300 left-4 overflow-hidden transition-all duration-1000"
+          className="absolute w-20 sm:w-24 h-14 sm:h-16 bg-blue-300 left-2 sm:left-4 overflow-hidden transition-all duration-1000"
           style={{
             top: `${calculateElevatorPosition()}px`,
           }}
